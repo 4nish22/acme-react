@@ -1,4 +1,3 @@
-import React from "react";
 import ProductCard from "../components/sub-components/productCard";
 import FilterSidebar from "../components/sub-components/filterSideBar";
 

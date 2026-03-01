@@ -1,4 +1,3 @@
-import React from 'react';
 import { Github, Twitter, Instagram, Cpu } from 'lucide-react';
 
 const Footer = () => {
