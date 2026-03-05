@@ -17,8 +17,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useLogout } from "../../api/queries/useAuth";
 
 const Navbar = () => {
+  const { mutate: logout, isPending } = useLogout();
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-white/80 backdrop-blur-md dark:bg-background/80 transition-all shadow-sm">
       {" "}
@@ -88,9 +90,13 @@ const Navbar = () => {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => logout()}
+                disabled={isPending}
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>{isPending ? "Logging out..." : "Logout"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
