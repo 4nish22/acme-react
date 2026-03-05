@@ -43,7 +43,7 @@ export const useLogout = () => {
     onSuccess: () => {
       localStorage.removeItem("token");
       queryClient.clear(); 
-      window.location.href = "/login"; 
+      window.location.href = "/"; 
     },
   });
 };
