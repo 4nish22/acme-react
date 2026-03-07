@@ -20,6 +20,18 @@ const createAxiosInstance = (contentType: string) => {
       "Content-Type": contentType,
       "x-project-type": "acmestore",
     },
+    paramsSerializer: {
+      serialize: (params) => {
+        return Object.entries(params)
+          .map(([key, value]) => {
+            if (value === undefined || value === null) return "";
+            // encodeURIComponent will turn "," into "%2C"
+            return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
+          })
+          .filter(Boolean)
+          .join("&");
+      },
+    },
   });
 
   instance.interceptors.request.use(

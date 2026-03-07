@@ -4,7 +4,8 @@ import { api } from "../axios-client";
 import type { ProductListResponse } from "../../types/product";
 
 export interface ProductFilters {
-  Context?: number;
+ "Context.ProductId"?: number;
+  "Context.ProductGrpIds"?: string;
   Skip?: number;
   Take?: number;
   SearchKey?: string | null;

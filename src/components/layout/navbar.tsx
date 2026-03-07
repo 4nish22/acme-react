@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Search,
   ShoppingCart,
@@ -21,12 +23,39 @@ import { useLogout } from "../../api/queries/useAuth";
 
 const Navbar = () => {
   const { mutate: logout, isPending } = useLogout();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const urlSearch = searchParams.get("searchKey") || "";
+
+  const [searchValue, setSearchValue] = useState(urlSearch);
+
+
+  const [prevUrlSearch, setPrevUrlSearch] = useState(urlSearch);
+  if (urlSearch !== prevUrlSearch) {
+    setSearchValue(urlSearch);
+    setPrevUrlSearch(urlSearch);
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const term = searchValue.trim();
+    if (term) {
+      navigate(`/product-list?search=${encodeURIComponent(term)}`);
+    } else {
+      navigate("/product-list");
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-white/80 backdrop-blur-md dark:bg-background/80 transition-all shadow-sm">
-      {" "}
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        
         {/* 1. Left: Logo */}
-        <div className="flex items-center gap-2 cursor-pointer">
+        <div 
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
             <span className="text-primary-foreground font-bold text-xl">
               Ac
@@ -39,14 +68,16 @@ const Navbar = () => {
 
         {/* 2. Middle: Search Bar */}
         <div className="flex-1 max-w-md px-8 hidden md:block">
-          <div className="relative group">
+          <form onSubmit={handleSearch} className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
-              type="search"
+              type="text"
               placeholder="Search products..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               className="w-full pl-10 h-10 rounded-full bg-secondary/50 border-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all"
             />
-          </div>
+          </form>
         </div>
 
         {/* 3. Right: Actions */}

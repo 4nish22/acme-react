@@ -10,7 +10,31 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import type { FilterSidebarProps } from "../../types/product";
 
-const FilterSidebar = ({ groups, tags, isLoading }: FilterSidebarProps) => {
+// Adding props to handle filter state from the parent
+interface ExtendedFilterSidebarProps extends FilterSidebarProps {
+  selectedGroupIds: number[];
+  onGroupChange: (ids: number[]) => void;
+  onReset: () => void;
+}
+
+const FilterSidebar = ({ 
+  groups, 
+  tags, 
+  isLoading, 
+  selectedGroupIds, 
+  onGroupChange, 
+  onReset 
+}: ExtendedFilterSidebarProps) => {
+
+  // Function to toggle individual checkboxes
+  const handleToggleGroup = (groupId: number, checked: boolean) => {
+    if (checked) {
+      onGroupChange([...selectedGroupIds, groupId]);
+    } else {
+      onGroupChange(selectedGroupIds.filter((id) => id !== groupId));
+    }
+  };
+
   return (
     <aside className="w-72 flex-shrink-0 hidden lg:block sticky top-24 h-fit">
       <div className="bg-white rounded-2xl border border-zinc-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-8">
@@ -33,7 +57,7 @@ const FilterSidebar = ({ groups, tags, isLoading }: FilterSidebarProps) => {
 
         <div className="h-px bg-zinc-100" />
 
-        {/* 2. Categories Section (Group) - Fixed Height for ~6 items */}
+        {/* 2. Categories Section (Group) */}
         <div>
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 mb-4">
             Categories
@@ -54,6 +78,11 @@ const FilterSidebar = ({ groups, tags, isLoading }: FilterSidebarProps) => {
                     <Checkbox
                       id={`group-${group.ProductGrpId}`}
                       className="rounded border-zinc-300"
+                      // Controlled checkbox state
+                      checked={selectedGroupIds.includes(group.ProductGrpId)}
+                      onCheckedChange={(checked) => 
+                        handleToggleGroup(group.ProductGrpId, checked as boolean)
+                      }
                     />
                     <Label
                       htmlFor={`group-${group.ProductGrpId}`}
@@ -68,6 +97,7 @@ const FilterSidebar = ({ groups, tags, isLoading }: FilterSidebarProps) => {
 
         <div className="h-px bg-zinc-100" />
 
+        {/* 3. Product Tags Section */}
         <div>
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 mb-4">
             Product Tags
@@ -103,6 +133,7 @@ const FilterSidebar = ({ groups, tags, isLoading }: FilterSidebarProps) => {
         {/* 4. Reset Button */}
         <Button
           variant="ghost"
+          onClick={onReset}
           className="w-full text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-red-500"
         >
           Reset All Filters
