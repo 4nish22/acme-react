@@ -8,7 +8,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   if (!product || !product.ProductId) return null;
 
   const isOutOfStock = product.StockQty <= 0;
-  const apiImage = `https://demo.acmetech.com.np/api/common/images?module=Product&initial=RETAURAT&uid=${product.ProductId}`;
+  const apiImage = `https://demo.acmetech.com.np/api/common/images?module=Product&initial=${localStorage.getItem('company')}&uid=${product.ProductId}`;
   // High contrast placeholder
   const placeholderImage = `https://placehold.co/600x600/FFFFFF/000000?text=${encodeURIComponent(product.ProductPrintingName)}`;
 

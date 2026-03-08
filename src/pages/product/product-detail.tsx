@@ -31,7 +31,7 @@ const ProductDetail = () => {
     );
 
   const placeholderImage = `https://placehold.co/600x600/FFFFFF/18181b?text=${encodeURIComponent(product.ProductPrintingName)}`;
-  const imageUrl = `https://demo.acmetech.com.np/api/common/images?module=Product&initial=RETAURAT&uid=${product.ProductId}`;
+  const imageUrl = `https://demo.acmetech.com.np/api/common/images?module=Product&initial=${localStorage.getItem('company')}&uid=${product.ProductId}`;
 
   return (
     <div className="bg-background min-h-screen text-zinc-900 pb-20">
