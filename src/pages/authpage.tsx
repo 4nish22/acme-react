@@ -42,7 +42,7 @@ export default function LoginPage() {
             const defaultCompany = companies[0].IniTial;
             localStorage.setItem("company", defaultCompany);
             await selectCompany(defaultCompany);
-            navigate("/product-list");
+            navigate("/products");
           } else {
             console.log("no company");
           }

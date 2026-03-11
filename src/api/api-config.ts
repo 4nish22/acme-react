@@ -6,17 +6,23 @@ export const API_ENDPOINTS = {
   },
   COMPANY: {
     LIST: "/api/company/list",
-    SELECT_COMPANY: (initial: string ) => `/api/company/select?initial=${initial} `,
-  },
-  
-    PRODUCT: {
-    LIST  : "/api/common/picklist/productlist",
-    DETAILS: (id: string | number) => `/picklist/${id}`,
-    GROUP  : "/api/master/ProductGroup/ListProductGroup",
-    GROUP1  : "/api/master/ProductTag/ListProductGroupTag?groupName=ProductGroup1",
+    SELECT_COMPANY: (initial: string) =>
+      `/api/company/select?initial=${initial} `,
   },
 
+  PRODUCT: {
+    LIST: "/api/common/picklist/productlist",
+    DETAILS: (id: string | number) =>
+      `/api/master/productmaster/listproduct?Context=${id}&Take=1`,
+    GROUP: "/api/master/ProductGroup/ListProductGroup",
+    GROUP1:
+      "/api/master/ProductTag/ListProductGroupTag?groupName=ProductGroup1",
+  },
 
- 
-
-} as const; 
+  CUSTOMER: {
+    LIST: "/api/common/picklist/ledgerlist",
+  },
+   ORDER: {
+    POST: "/api/transaction/salesorder/1",
+  },
+} as const;

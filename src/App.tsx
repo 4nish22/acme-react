@@ -5,6 +5,7 @@ import ProductPage from "./pages/product/product-list";
 import ProtectedRoute from "./components/auth/protectedRoute";
 import AppLayout from "./components/layout/appLayout";
 import ProductDetail from "./pages/product/product-detail";
+import CheckoutPage from "./components/sub-components/checkout";
 
 function App() {
   return (
@@ -16,8 +17,9 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/product-list" element={<ProductPage />} />
+              <Route path="/products" element={<ProductPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Route>{" "}
           </Route>
 

@@ -10,10 +10,9 @@ const ProductPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
-  const itemsPerPage = 9;
+  const itemsPerPage = 12;
 
   const searchQuery = searchParams.get("search") || "";
-
   const skipValue = (currentPage - 1) * itemsPerPage;
 
   const groupIdsString = useMemo(() => {
@@ -75,59 +74,57 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="border-b border-zinc-50">
-        {/* <CategoryBar groups={groups} isLoading={isLoading} /> */}
-      </div>
-
-      <main className="mx-auto max-w-[1440px] px-6 lg:px-10 py-12">
+    <div className="min-h-screen bg-[#F4F4F5] text-zinc-900">
+      <main className="mx-auto max-w-[1600px] px-6 lg:px-12 py-12">
+        
+        {/* Search Breadcrumb / Active State */}
         {searchQuery && (
-          <div className="mb-8 flex items-center gap-3 bg-zinc-50 w-fit px-4 py-2 rounded-full border border-zinc-100">
-            <p className="text-sm font-medium text-zinc-500">
-              Showing results for:{" "}
-              <span className="text-zinc-900 font-bold">"{searchQuery}"</span>
-            </p>
-            <button
-              onClick={handleClearSearch}
-              className="hover:bg-zinc-200 p-1 rounded-full transition-colors"
-            >
-              <X className="h-3 w-3 text-zinc-900" />
-            </button>
+          <div className="mb-10 flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-white border border-zinc-200 pl-4 pr-2 py-1.5 rounded-full shadow-sm">
+              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Search:</span>
+              <span className="text-sm font-bold text-zinc-900">"{searchQuery}"</span>
+              <button
+                onClick={handleClearSearch}
+                className="ml-2 p-1 hover:bg-zinc-100 rounded-full transition-colors"
+              >
+                <X className="h-3.5 w-3.5 text-zinc-400" />
+              </button>
+            </div>
+            <span className="text-xs font-medium text-zinc-400">{totalRecords} results found</span>
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-12">
-          <div className="w-full lg:w-72 flex-shrink-0">
-            <FilterSidebar
-              groups={groups}
-              tags={tags}
-              isLoading={isLoading}
-              selectedGroupIds={selectedGroupIds}
-              onGroupChange={handleFilterChange}
-              onReset={handleReset}
-            />
-          </div>
-
-          <div className="flex-1 flex flex-col">
-            <div className="mb-8 flex justify-between items-end">
-              <h2 className="text-xl font-black text-zinc-900">
-                {searchQuery
-                  ? "Search Results"
-                  : selectedGroupIds.length > 0
-                    ? "Filtered Results"
-                    : "All Products"}
-                <span className="ml-2 text-sm font-medium text-zinc-400">
-                  ({totalRecords})
-                </span>
-              </h2>
+        <div className="flex flex-col lg:flex-row gap-16">
+          {/* Filter Section - No Label, Just Content */}
+          <aside className="w-full lg:w-64 flex-shrink-0">
+            <div className="sticky top-12">
+              <FilterSidebar
+                groups={groups}
+                tags={tags}
+                isLoading={isLoading}
+                selectedGroupIds={selectedGroupIds}
+                onGroupChange={handleFilterChange}
+                onReset={handleReset}
+              />
             </div>
+          </aside>
 
-            <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 items-start min-h-[600px]">
+          {/* Product Grid */}
+          <div className="flex-1">
+            {!searchQuery && (
+              <div className="mb-10 pb-6 border-b border-zinc-200 flex items-baseline justify-between">
+                <h1 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400">
+                  Collection <span className="text-zinc-900 ml-2">/ {totalRecords}</span>
+                </h1>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-h-[600px]">
               {isLoading
                 ? [...Array(itemsPerPage)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-[420px] w-full animate-pulse rounded-[32px] bg-zinc-50 border border-zinc-100"
+                      className="aspect-[4/5] w-full animate-pulse rounded-2xl bg-zinc-200/60"
                     />
                   ))
                 : productList.map((product) => (
@@ -135,87 +132,72 @@ const ProductPage = () => {
                   ))}
             </div>
 
+            {/* Empty State */}
             {!isLoading && productList.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-40 text-zinc-400 border-2 border-dashed border-zinc-50 rounded-[40px]">
-                <p className="font-bold uppercase tracking-[0.2em] text-xs">
-                  {searchQuery
-                    ? `No results for "${searchQuery}"`
-                    : "No Products Found"}
+              <div className="flex flex-col items-center justify-center py-40 bg-zinc-100/50 rounded-[32px] border-2 border-dashed border-zinc-200">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4">
+                  No matches found
                 </p>
                 <Button
-                  variant="link"
                   onClick={handleReset}
-                  className="mt-2 text-zinc-900 font-bold"
+                  className="bg-white text-zinc-900 border border-zinc-200 rounded-full px-8 py-2 font-bold hover:bg-zinc-900 hover:text-white transition-all shadow-sm"
                 >
-                  Clear all filters
+                  Clear Selection
                 </Button>
               </div>
             )}
 
+            {/* Pagination */}
             {totalRecords > 0 && (
-              <div className="mt-32 pt-10 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-8">
-                <div className="flex flex-col gap-1">
-                  <p className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.2em]">
-                    Inventory Overview
-                  </p>
-                  <p className="text-sm font-bold text-zinc-900">
-                    Showing {skipValue + 1} —{" "}
-                    {Math.min(skipValue + itemsPerPage, totalRecords)}
-                    <span className="text-zinc-400 font-medium ml-1">
-                      of {totalRecords} Records
-                    </span>
-                  </p>
+              <footer className="mt-24 py-8 border-t border-zinc-200 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="text-xs font-bold text-zinc-400 tracking-tight">
+                  <span className="text-zinc-900">{skipValue + 1}—{Math.min(skipValue + itemsPerPage, totalRecords)}</span> 
+                  <span className="mx-2">of</span> 
+                  {totalRecords}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <Button
                     variant="ghost"
-                    size="icon"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1 || isLoading}
-                    className="w-11 h-11 rounded-xl hover:bg-zinc-100 disabled:opacity-20"
+                    className="h-10 w-10 p-0 rounded-full bg-white border border-zinc-200 hover:bg-zinc-900 hover:text-white transition-all disabled:opacity-20"
                   >
-                    <ChevronLeft className="h-5 w-5 text-zinc-600" />
+                    <ChevronLeft size={18} />
                   </Button>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-full">
                     {getPageNumbers().map((page, idx) => {
                       if (page === "spacer") {
-                        return (
-                          <div key={`spacer-${idx}`} className="px-2">
-                            <MoreHorizontal className="h-4 w-4 text-zinc-300" />
-                          </div>
-                        );
+                        return <MoreHorizontal key={idx} className="h-3 w-3 text-zinc-300" />;
                       }
                       const isActive = currentPage === page;
                       return (
-                        <Button
+                        <button
                           key={idx}
-                          variant={isActive ? "default" : "ghost"}
                           onClick={() => handlePageChange(page as number)}
-                          className={`w-11 h-11 rounded-xl text-xs font-black transition-all duration-300 ${
+                          className={`w-7 h-7 text-[11px] font-bold rounded-full transition-all ${
                             isActive
-                              ? "bg-zinc-900 text-white shadow-[0_10px_20px_rgba(0,0,0,0.1)]"
-                              : "text-zinc-500 hover:bg-zinc-100"
+                              ? "bg-zinc-900 text-white"
+                              : "text-zinc-400 hover:text-zinc-900"
                           }`}
                         >
                           {page}
-                        </Button>
+                        </button>
                       );
                     })}
                   </div>
 
                   <Button
                     variant="ghost"
-                    size="icon"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages || isLoading}
-                    className="w-11 h-11 rounded-xl hover:bg-zinc-100 disabled:opacity-20"
+                    className="h-10 w-10 p-0 rounded-full bg-white border border-zinc-200 hover:bg-zinc-900 hover:text-white transition-all disabled:opacity-20"
                   >
-                    <ChevronRight className="h-5 w-5 text-zinc-600" />
+                    <ChevronRight size={18} />
                   </Button>
                 </div>
-              </div>
+              </footer>
             )}
           </div>
         </div>

@@ -25,7 +25,6 @@ const CategoryBar = ({ groups, isLoading }: CategoryBarProps) => {
     <div className="w-full bg-white pt-10 pb-12">
       <div className="mx-auto max-w-[1440px] px-12 lg:px-16">
         
-        {/* Centered Header Section */}
         <div className="flex flex-col items-center mb-10 text-center">
           <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-400 mb-2">
             Explore Collection
@@ -36,10 +35,9 @@ const CategoryBar = ({ groups, isLoading }: CategoryBarProps) => {
           <div className="mt-4 h-1 w-12 bg-zinc-900 rounded-full" />
         </div>
 
-        {/* Carousel Component */}
         <Carousel
           opts={{
-            align: isLargeSet ? "start" : "center", // Center small sets for better aesthetics
+            align: isLargeSet ? "start" : "center", 
             loop: false,
           }}
           className="w-full group/carousel"
@@ -81,7 +79,6 @@ const CategoryBar = ({ groups, isLoading }: CategoryBarProps) => {
             )}
           </CarouselContent>
 
-          {/* Navigation Controls - Only show if there's enough items to scroll */}
           {groups && groups.length > (isLargeSet ? 6 : 4) && (
             <>
               <CarouselPrevious className="hidden md:flex -left-6 lg:-left-10 opacity-0 group-hover/carousel:opacity-100 transition-opacity bg-white border-zinc-100 shadow-md hover:bg-zinc-900 hover:text-white" />

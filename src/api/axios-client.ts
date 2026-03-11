@@ -25,7 +25,6 @@ const createAxiosInstance = (contentType: string) => {
         return Object.entries(params)
           .map(([key, value]) => {
             if (value === undefined || value === null) return "";
-            // encodeURIComponent will turn "," into "%2C"
             return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
           })
           .filter(Boolean)

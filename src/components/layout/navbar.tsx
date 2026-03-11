@@ -2,7 +2,6 @@ import { useState, memo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Search,
-  ShoppingCart,
   LogOut,
   User,
   Settings,
@@ -20,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useLogout } from "../../api/queries/useAuth";
+import CartDrawer from "../../pages/product/cart";
 
 const Navbar = () => {
   const { mutate: logout, isPending } = useLogout();
@@ -29,7 +29,6 @@ const Navbar = () => {
   const urlSearch = searchParams.get("search") || "";
   const [searchValue, setSearchValue] = useState(urlSearch);
 
-  // Sync local state if URL changes (e.g., cleared from the Filter Sidebar)
   const [prevUrlSearch, setPrevUrlSearch] = useState(urlSearch);
   if (urlSearch !== prevUrlSearch) {
     setSearchValue(urlSearch);
@@ -40,9 +39,9 @@ const Navbar = () => {
     e.preventDefault();
     const term = searchValue.trim();
     if (term) {
-      navigate(`/product-list?search=${encodeURIComponent(term)}`);
+      navigate(`/products?search=${encodeURIComponent(term)}`);
     } else {
-      navigate("/product-list");
+      navigate("/products");
     }
   };
 
@@ -50,7 +49,6 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-zinc-100 bg-white/80 backdrop-blur-md transition-all shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-10">
         
-        {/* 1. Left: Logo */}
         <div 
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
@@ -63,8 +61,7 @@ const Navbar = () => {
           </span>
         </div>
 
-        {/* 2. Middle: Search Bar (Desktop Only) */}
-        {/* We keep this for desktop as it's a primary navigation pattern */}
+  
         <div className="flex-1 max-w-md px-8 hidden md:block">
           <form onSubmit={handleSearch} className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors" />
@@ -78,22 +75,15 @@ const Navbar = () => {
           </form>
         </div>
 
-        {/* 3. Right: Actions */}
+      
         <div className="flex items-center gap-2 lg:gap-3">
-          {/* MOBILE SEARCH ICON REMOVED 
-              Users will now use the floating "Filter" button to search 
-          */}
-
           <Button
             variant="ghost"
             size="icon"
             className="relative hover:bg-zinc-100 rounded-full"
-            onClick={() => navigate("/cart")}
           >
-            <ShoppingCart className="h-5 w-5 text-zinc-600" />
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white">
-              3
-            </span>
+            <CartDrawer/>
+         
           </Button>
 
           <DropdownMenu>

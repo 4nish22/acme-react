@@ -29,7 +29,6 @@ interface ExtendedFilterSidebarProps extends FilterSidebarProps {
   onReset: () => void;
 }
 
-// 1. Memoized FilterContent to prevent unnecessary re-renders
 const FilterContent = memo(({
   groups,
   isLoading,
@@ -214,7 +213,6 @@ const FilterSidebar = memo(
 
     const activeSearchTerm = searchParams.get("search") || "";
 
-    // 2. Throttled scroll logic to eliminate jitter
     useEffect(() => {
       const updateScrollDir = () => {
         const scrollY = window.pageYOffset;
@@ -245,7 +243,6 @@ const FilterSidebar = memo(
       return () => window.removeEventListener("scroll", onScroll);
     }, [isOpen]);
 
-    // 3. Memoized handlers
     const handleToggleGroup = useCallback((groupId: number, checked: boolean) => {
       if (checked) onGroupChange([...selectedGroupIds, groupId]);
       else onGroupChange(selectedGroupIds.filter((id) => id !== groupId));
@@ -256,7 +253,6 @@ const FilterSidebar = memo(
 
     return (
       <>
-        {/* MOBILE UI */}
         <div className="lg:hidden">
           <div
             className={`fixed right-6 bottom-8 z-[60] transition-all duration-300 ease-out will-change-transform ${
@@ -311,7 +307,6 @@ const FilterSidebar = memo(
           </Sheet>
         </div>
 
-        {/* DESKTOP UI */}
         <aside className="w-72 flex-shrink-0 hidden lg:block sticky top-24 h-fit">
           <div className="bg-white rounded-[32px] border border-zinc-100 p-8 shadow-[0_8px_40px_rgba(0,0,0,0.02)]">
             <FilterContent
