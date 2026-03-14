@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useLogout } from "../../api/queries/useAuth";
-import CartDrawer from "../../pages/product/cart";
+import CartDrawer from "../sub-components/cart";
 
 const Navbar = () => {
   const { mutate: logout, isPending } = useLogout();
@@ -57,7 +57,7 @@ const Navbar = () => {
             <span className="text-white font-bold text-lg">Ac</span>
           </div>
           <span className="hidden font-black lg:inline-block text-xl tracking-tight text-zinc-900 uppercase">
-            ACME
+           {localStorage.getItem('companyName')}
           </span>
         </div>
 

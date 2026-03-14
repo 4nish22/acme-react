@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
     LIST: "/api/common/picklist/ledgerlist",
   },
    ORDER: {
-    POST: "/api/transaction/salesorder/1",
+    POST: "/api/transaction/salesorder/new",
+    LIST_TERM: "/api/common/term",
   },
 } as const;

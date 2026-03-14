@@ -15,7 +15,6 @@ interface CategoryBarProps {
 const CategoryBar = ({ groups, isLoading }: CategoryBarProps) => {
   const getStockImage = (index: number) =>
     `https://picsum.photos/seed/${index + 100}/200`;
-
   const isLargeSet = groups && groups.length >= 6;
   const itemBasis = isLargeSet 
     ? "lg:basis-1/6 md:basis-1/5 sm:basis-1/4 basis-1/2" 

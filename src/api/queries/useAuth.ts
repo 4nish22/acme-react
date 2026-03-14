@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {  api, publicApi } from "../axios-client";
+import {  api, } from "../axios-client";
 import { API_ENDPOINTS } from "../api-config";
 import type { Login } from "../../types/auth";
 
@@ -17,10 +17,9 @@ export const useCheckSession = () => {
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (credentials: Login) => {
-      const { data } = await publicApi.post(
+      const { data } = await api.post(
         API_ENDPOINTS.AUTH.LOGIN,
         credentials,
       );
@@ -28,6 +27,7 @@ export const useLogin = () => {
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.data[0].Token);
+      localStorage.setItem("salesManID", data.data[0].SalesmanId);
       queryClient.invalidateQueries({ queryKey: ["auth-session"] });
     },
   });

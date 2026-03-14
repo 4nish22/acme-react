@@ -38,9 +38,9 @@ export default function LoginPage() {
           const { data: companies } = await listCompany();
 
           if (companies && companies.length > 0) {
-            console.log("Companies loaded:", companies);
             const defaultCompany = companies[0].IniTial;
             localStorage.setItem("company", defaultCompany);
+            localStorage.setItem("companyName", companies[0].CompanyName);
             await selectCompany(defaultCompany);
             navigate("/products");
           } else {
