@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "../api-config";
 import { api } from "../axios-client";
 import type { ProductListResponse } from "../../types/product";
@@ -14,11 +14,19 @@ export interface ProductFilters {
 
 /* --- API Functions --- */
 
-const listProduct = async (filters: ProductFilters = {}): Promise<ProductListResponse> => {
-  const { data } = await api.get(API_ENDPOINTS.PRODUCT.LIST, { params: filters });
+const listProduct = async (
+  filters: ProductFilters = {},
+): Promise<ProductListResponse> => {
+  const { data } = await api.get(API_ENDPOINTS.PRODUCT.LIST, {
+    params: filters,
+  });
   return {
-    products: Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []), 
-    totalRecords: data.totalrecords || 0
+    products: Array.isArray(data.data)
+      ? data.data
+      : Array.isArray(data)
+        ? data
+        : [],
+    totalRecords: data.totalrecords || 0,
   };
 };
 
@@ -38,21 +46,25 @@ const fetchGroupTags = async () => {
   return data.data || data;
 };
 
+const fetchExport = async () => {
+  const { data } = await api.get(API_ENDPOINTS.PRODUCT.EXPORT, {
+    responseType: "blob",
+  });
+  return data;
+};
 
 export const useProduct = (id: string | number | undefined) => {
   return useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProductDetails(id!),
     enabled: !!id,
-    staleTime: 1000 * 60 * 10, 
+    staleTime: 1000 * 60 * 10,
   });
 };
-
 
 export const useProducts = (initialFilters: ProductFilters = {}) => {
   const queryClient = useQueryClient();
 
-  // 1. Fetch Main Products List
   const productQuery = useQuery({
     queryKey: ["products", initialFilters],
     queryFn: () => listProduct(initialFilters),
@@ -69,6 +81,23 @@ export const useProducts = (initialFilters: ProductFilters = {}) => {
     queryKey: ["productTags"],
     queryFn: fetchGroupTags,
     staleTime: 1000 * 60 * 30,
+  });
+
+  const exportMutation = useMutation({
+    mutationFn: fetchExport,
+    onSuccess: (blob) => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "products_export.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    onError: (error) => {
+      console.error("Download failed:", error);
+    },
   });
 
   const fetchProducts = async (filters: ProductFilters = {}) => {
@@ -90,14 +119,21 @@ export const useProducts = (initialFilters: ProductFilters = {}) => {
     data: productQuery.data ?? { products: [], totalRecords: 0 },
     groups: groupQuery.data ?? [],
     tags: tagQuery.data ?? [],
-    
+    export: exportMutation.data ?? [],
+
     // Statuses
-    isLoading: productQuery.isLoading || groupQuery.isLoading || tagQuery.isLoading,
+    isLoading:
+      productQuery.isLoading || groupQuery.isLoading || tagQuery.isLoading,
     isFetching: productQuery.isFetching,
-    isError: productQuery.isError || groupQuery.isError || tagQuery.isError,
-    
+    isError:
+      productQuery.isError ||
+      groupQuery.isError ||
+      tagQuery.isError ||
+      exportMutation.isError,
+
     // Methods
+    handleExport: exportMutation.mutateAsync,
     fetchProducts,
-    getSingleProduct
+    getSingleProduct,
   };
 };

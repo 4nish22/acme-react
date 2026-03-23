@@ -17,12 +17,13 @@ export const API_ENDPOINTS = {
     GROUP: "/api/master/ProductGroup/ListProductGroup",
     GROUP1:
       "/api/master/ProductTag/ListProductGroupTag?groupName=ProductGroup1",
+    EXPORT: "/api/DocumentExport/Products",
   },
 
   CUSTOMER: {
     LIST: "/api/common/picklist/ledgerlist",
   },
-   ORDER: {
+  ORDER: {
     POST: "/api/transaction/salesorder/new",
     LIST_TERM: "/api/common/term",
   },

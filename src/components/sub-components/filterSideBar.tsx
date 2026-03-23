@@ -1,12 +1,6 @@
 import { useState, useEffect, memo, useCallback, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
@@ -65,11 +59,6 @@ const FilterContent = memo(({
     if (e.key === "Enter") executeSearch(localSearch);
   };
 
-  const handleSortChange = (value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("sort", value);
-    navigate(`?${newParams.toString()}`, { replace: true });
-  };
 
   const isSearchActive = activeSearchTerm.length > 0;
 
@@ -120,24 +109,7 @@ const FilterContent = memo(({
         </>
       )}
 
-      <div>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4">
-          Sort Order
-        </h3>
-        <Select
-          defaultValue={searchParams.get("sort") || "newest"}
-          onValueChange={handleSortChange}
-        >
-          <SelectTrigger className="w-full bg-zinc-50 rounded-xl border-zinc-100 h-11 focus:ring-0 text-[13px] font-medium shadow-none">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl shadow-xl border-zinc-100">
-            <SelectItem value="newest">Newest Arrivals</SelectItem>
-            <SelectItem value="price-low">Price: Low to High</SelectItem>
-            <SelectItem value="price-high">Price: High to Low</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    
 
       <div className="h-px bg-zinc-100" />
 

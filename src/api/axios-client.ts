@@ -29,57 +29,17 @@ export const BASEURL =
 
 export const getToken = () => localStorage.getItem("token");
 
-// export const publicApi = axios.create({
-//   baseURL: BASEURL,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-// publicApi.interceptors.response.use(
-//   (response) => {
-//     const responseData = response.data as ApiResponse;
-//     const appStatus = responseData?.status;
-
-//     if (
-//       appStatus === ApiStatusCode.UnAuthorized ||
-//       appStatus === ApiStatusCode.TokenExpired
-//     ) {
-//       localStorage.removeItem("token");
-
-//       toast.error("Action Failed", {
-//         description: responseData.message || `Error code: ${appStatus}`,
-//         duration: 3000,
-//       });
-
-//       if (window.location.pathname !== "/") {
-//         window.location.href = "/";
-//       }
-
-//       return Promise.reject(responseData);
-//     }
-//     const isSuccess = appStatus >= 200 && appStatus < 300;
-
-//     if (!isSuccess) {
-//       toast.error("Action Failed", {
-//         description: responseData.message || `Error code: ${appStatus}`,
-//         duration: 4000,
-//       });
-
-//       return Promise.reject(responseData);
-//     }
-
-//     return response;
-//   },
-//   (error: AxiosError<ApiResponse>) => {
-//     const networkMessage = error.response?.data?.message || error.message;
-
-//     toast.error("Network Error", {
-//       description: networkMessage,
-//     });
-
-//     return Promise.reject(error);
-//   },
-// );
+// Helper to handle logout/cleanup to avoid repeating code
+const handleUnauthorized = (message?: string) => {
+  localStorage.removeItem("token");
+  toast.error("Session Expired", {
+    description: message || "Please login again.",
+    duration: 3000,
+  });
+  if (window.location.pathname !== "/") {
+    window.location.href = "/";
+  }
+};
 
 const createAxiosInstance = (contentType: string) => {
   const instance = axios.create({
@@ -121,14 +81,7 @@ const createAxiosInstance = (contentType: string) => {
         appStatus === ApiStatusCode.UnAuthorized ||
         appStatus === ApiStatusCode.TokenExpired
       ) {
-        localStorage.removeItem("token");
-        toast.error("Action Failed", {
-          description: responseData.message || `Error code: ${appStatus}`,
-          duration: 3000,
-        });
-        if (window.location.pathname !== "/") {
-          window.location.href = "/";
-        }
+        handleUnauthorized(responseData.message);
         return Promise.reject(responseData);
       }
 
@@ -145,6 +98,20 @@ const createAxiosInstance = (contentType: string) => {
       return response;
     },
     (error: AxiosError) => {
+      // --- NEW: Handle direct HTTP errors (404, 500, 503, etc.) ---
+      const status = error.response?.status;
+      const responseData = error.response?.data as ApiResponse;
+      const errorMessage = responseData?.message || error.message || "An unexpected error occurred";
+
+      if (status === ApiStatusCode.UnAuthorized || status === ApiStatusCode.TokenExpired) {
+        handleUnauthorized(errorMessage);
+      } else {
+        toast.error("Server Error", {
+          description: `[${status || "Network"}] ${errorMessage}`,
+          duration: 4000,
+        });
+      }
+
       return Promise.reject(error);
     },
   );

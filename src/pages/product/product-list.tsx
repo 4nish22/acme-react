@@ -19,7 +19,7 @@ const ProductPage = () => {
     return selectedGroupIds.length > 0 ? selectedGroupIds.join(",") : undefined;
   }, [selectedGroupIds]);
 
-  const { data, groups, tags, isLoading } = useProducts({
+  const { data, groups, tags, handleExport, isLoading } = useProducts({
     "Context.ProductId": 0,
     "Context.ProductGrpIds": groupIdsString,
     SearchKey: searchQuery,
@@ -76,13 +76,15 @@ const ProductPage = () => {
   return (
     <div className="min-h-screen bg-[#F4F4F5] text-zinc-900">
       <main className="mx-auto max-w-[1600px] px-6 lg:px-12 py-12">
-        
-        {/* Search Breadcrumb / Active State */}
         {searchQuery && (
           <div className="mb-10 flex items-center gap-4">
             <div className="flex items-center gap-2 bg-white border border-zinc-200 pl-4 pr-2 py-1.5 rounded-full shadow-sm">
-              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Search:</span>
-              <span className="text-sm font-bold text-zinc-900">"{searchQuery}"</span>
+              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                Search:
+              </span>
+              <span className="text-sm font-bold text-zinc-900">
+                "{searchQuery}"
+              </span>
               <button
                 onClick={handleClearSearch}
                 className="ml-2 p-1 hover:bg-zinc-100 rounded-full transition-colors"
@@ -90,12 +92,13 @@ const ProductPage = () => {
                 <X className="h-3.5 w-3.5 text-zinc-400" />
               </button>
             </div>
-            <span className="text-xs font-medium text-zinc-400">{totalRecords} results found</span>
+            <span className="text-xs font-medium text-zinc-400">
+              {totalRecords} results found
+            </span>
           </div>
         )}
 
         <div className="flex flex-col lg:flex-row gap-16">
-          {/* Filter Section - No Label, Just Content */}
           <aside className="w-full lg:w-64 flex-shrink-0">
             <div className="sticky top-12">
               <FilterSidebar
@@ -111,13 +114,25 @@ const ProductPage = () => {
 
           {/* Product Grid */}
           <div className="flex-1">
-            {!searchQuery && (
-              <div className="mb-10 pb-6 border-b border-zinc-200 flex items-baseline justify-between">
-                <h1 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400">
-                  Collection <span className="text-zinc-900 ml-2">/ {totalRecords}</span>
-                </h1>
+            <div className="mb-10 pb-6 border-b border-zinc-200 flex items-center justify-between">
+              <div>
+                {!searchQuery ? (
+                  <h1 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400">
+                    Collection{" "}
+                    <span className="text-zinc-900 ml-2">/ {totalRecords}</span>
+                  </h1>
+                ) : (
+                  <div className="h-5" />
+                )}
               </div>
-            )}
+
+              <Button
+                onClick={() => handleExport()}
+                className="border border-zinc-900 bg-zinc-900 text-white px-6 py-2 font-bold  transition-all shadow-sm"
+              >
+                Export Product
+              </Button>
+            </div>
 
             <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-h-[600px]">
               {isLoading
@@ -151,8 +166,11 @@ const ProductPage = () => {
             {totalRecords > 0 && (
               <footer className="mt-24 py-8 border-t border-zinc-200 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="text-xs font-bold text-zinc-400 tracking-tight">
-                  <span className="text-zinc-900">{skipValue + 1}—{Math.min(skipValue + itemsPerPage, totalRecords)}</span> 
-                  <span className="mx-2">of</span> 
+                  <span className="text-zinc-900">
+                    {skipValue + 1}—
+                    {Math.min(skipValue + itemsPerPage, totalRecords)}
+                  </span>
+                  <span className="mx-2">of</span>
                   {totalRecords}
                 </div>
 
@@ -169,7 +187,12 @@ const ProductPage = () => {
                   <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-full">
                     {getPageNumbers().map((page, idx) => {
                       if (page === "spacer") {
-                        return <MoreHorizontal key={idx} className="h-3 w-3 text-zinc-300" />;
+                        return (
+                          <MoreHorizontal
+                            key={idx}
+                            className="h-3 w-3 text-zinc-300"
+                          />
+                        );
                       }
                       const isActive = currentPage === page;
                       return (
